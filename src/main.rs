@@ -1,17 +1,13 @@
-use actix_web::{web, App, HttpRequest, HttpServer, Responder};
+use std::net::TcpListener;
+
+use newsletter::{configuration::get_configuration, startup::run};
 
 #[tokio::main]
-async fn main() -> Result<(), std::io::Error> {
-    HttpServer::new(|| {
-        App::new()
-            .route("/", web::get().to(greet))
-            .route("/{name}", web::get().to(greet))
-    })
-    .bind("127.0.0.1:8000")?
-    .run()
-    .await
-}
-async fn greet(req: HttpRequest) -> impl Responder {
-    let name = req.match_info().get("name").unwrap_or("World");
-    format!("Hello {}!", &name)
+async fn main() -> std::io::Result<()> {
+    // Panic if we can't read configuration
+    let configuration = get_configuration().expect("Failed to read configuration.");
+    // We have removed the hard=coded `8000` - it's now coming from our settings!
+    let address = format!("127.0.0.1:{}", configuration.application_port);
+    let listener = TcpListener::bind(address)?;
+    run(listener)?.await
 }
