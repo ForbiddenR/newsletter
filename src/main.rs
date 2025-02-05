@@ -1,10 +1,14 @@
 use std::net::TcpListener;
 
+use env_logger::Env;
 use newsletter::{configuration::get_configuration, startup::run};
 use sqlx::PgPool;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
+    // We are falling back to printing all logs at info-level or above
+    // if the RUST_LOG environment variable has not been set.
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
     // Panic if we can't read configuration
     let configuration = get_configuration().expect("Failed to read configuration.");
     let connection_pool = PgPool::connect(&configuration.database.connection_string())
