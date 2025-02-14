@@ -1,7 +1,0 @@
-application_port: 8000
-database:
-  host: "127.0.0.1"
-  port: 25432
-  username: "postgres"
-  password: "123456"
-  database_name: "newsletter"

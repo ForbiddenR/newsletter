@@ -9,9 +9,16 @@ COPY . .
 
 RUN SQLX_OFFLINE=true cargo build --release
 
-FROM alpine:3.21
+FROM alpine:3.21 AS runtime
 
-COPY --from=builder /app/target/release/newsletter /usr/local/bin/newsletter
+WORKDIR /app
 
+ENV APP_ENVIRONMENT=production
 
-ENTRYPOINT ["newsletter"]
+COPY --from=builder /app/target/release/newsletter newsletter
+
+COPY configuration configuration
+
+EXPOSE 8000
+
+ENTRYPOINT ["./newsletter"]
