@@ -1,0 +1,8 @@
+services:
+  newsletter:
+    image: newsletter:v0.1.0
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configuration.yaml:/etc/newsletter/configuration.yaml:ro
